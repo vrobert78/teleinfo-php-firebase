@@ -14,3 +14,5 @@ This daemon reads continuously data from the electricity meter and sends them to
 
 Don't forget to add your `firebase-service-account.json` to authenticate to Firebase.\
 Rename the `config.sample.php` into `config.php`. Set the constants to reflect your configuration.
+
+The Android App [teleinfo-android-firebase](https://github.com/vrobert78/teleinfo-android-firebase) is able to use the data stored in Firebase and to represent in near-realtime your electricity consumption.
