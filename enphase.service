@@ -1,0 +1,13 @@
+[Unit]
+Description=Enphase service
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=teleinfo
+ExecStart=/usr/bin/php /home/teleinfo/enphase.php
+
+[Install]
+WantedBy=multi-user.target

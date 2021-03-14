@@ -6,7 +6,7 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Http\HttpClientOptions;
 
-date_default_timezone_set('Europe/Paris');
+date_default_timezone_set(TIMEZONE);
 
 function getFrame() {
     $fd = dio_open(DEVICE, O_RDWR | O_NOCTTY | O_NONBLOCK);
@@ -34,7 +34,7 @@ function getFrame() {
 
 function decodeFrame($rawdataframe) {
     $data = array();
-    $data['DATETIME']=date("Y-m-d H:i:s");
+    $data['DATETIME']=date(DATETIMEFORMAT);
 
     $frames = explode(chr(10), $rawdataframe); // Convert the rawdata frame into array
 
@@ -95,13 +95,11 @@ function insertIntoFirebase(array $data, $database) {
     return TRUE;
 }
 
-
-
 $database = (new Factory)
-   ->withServiceAccount(__DIR__ . '/firebase-service-account.json')
+   ->withServiceAccount(FIREBASEJSON)
    ->withDatabaseUri(FIREBASE_URI)
    ->withHttpClientOptions(
-    HttpClientOptions::default()->withTimeout(5.0)
+    HttpClientOptions::default()->withTimeout(FIREBASETIMEOUT)
    )
    ->createDatabase();
 
