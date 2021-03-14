@@ -4,6 +4,7 @@ require __DIR__.'/config.php';
 
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
+use Kreait\Firebase\Http\HttpClientOptions;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -99,6 +100,9 @@ function insertIntoFirebase(array $data, $database) {
 $database = (new Factory)
    ->withServiceAccount(__DIR__ . '/firebase-service-account.json')
    ->withDatabaseUri(FIREBASE_URI)
+   ->withHttpClientOptions(
+    HttpClientOptions::default()->withTimeout(5.0)
+   )
    ->createDatabase();
 
 while (true) {
