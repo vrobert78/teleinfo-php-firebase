@@ -11,7 +11,7 @@ const DEVICE_CONFIG = array(
 );
 
 const FIREBASE_URI = 'https://xxxxx.firebaseio.com/';
-const ENPHASE_URI = 'http://xxx.xxx.xxx.xxx/api/v1/production';
+const ENPHASE_URI = 'http://xxx.xxx.xxx.xxx/production.json';
 
 const ENPHASEPAUSE = 5;
 const DATETIMEFORMAT = 'Y-m-d H:i:s';
