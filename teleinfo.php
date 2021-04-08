@@ -89,9 +89,7 @@ function checkSum($message, $checksum) {
 
 function insertIntoFirebase(array $data, $database) {
     if (empty($data) || !isset($data)) { return FALSE; }
-    foreach ($data as $key => $value){
-        $database->getReference()->getChild('HOMETIC')->getChild($key)->set($value);
-    }
+    $database->getReference()->getChild('HOMETIC')->set($data);
     return TRUE;
 }
 
