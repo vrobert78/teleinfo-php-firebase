@@ -17,9 +17,7 @@ function getProduction() {
 
 function insertIntoFirebase(array $data, $database) {
     if (empty($data) || !isset($data)) { return FALSE; }
-    foreach ($data as $key => $value){
-        $database->getReference()->getChild('ENPHASE')->getChild($key)->set($value);
-    }
+    $database->getReference()->getChild('ENPHASE')->set($data);
     return TRUE;
 }
 
