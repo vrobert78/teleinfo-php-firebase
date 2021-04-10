@@ -3,6 +3,7 @@
 const TIMEZONE = 'Europe/Paris';
 
 const DEVICE = '/dev/ttyUSB0';
+const DEVICE_ARDUINO = '/dev/ttyACM0';
 const DEVICE_CONFIG = array(
     'baud' => 1200,
     'bits' => 7,

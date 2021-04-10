@@ -5,7 +5,7 @@ date_default_timezone_set(TIMEZONE);
 
 
 function sendFrame($papp, $ptec) {
-    $fd = dio_open(DEVICE, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    $fd = dio_open(DEVICE_ARDUINO, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
     dio_fcntl($fd, F_SETFL, O_SYNC);
     dio_tcsetattr($fd, DEVICE_CONFIG);
