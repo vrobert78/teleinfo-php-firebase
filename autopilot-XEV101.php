@@ -91,6 +91,7 @@ while (true) {
         }
 
         if ($ISOUSC<=0) {
+            if (DEBUGAUTOPILOT) echo "Trop d'import > STOP".PHP_EOL;
             $STOP=true;
         }
         else {
