@@ -127,6 +127,8 @@ while (true) {
         $TRAME_PTEC = "HP..";
     }
 
+    $statsd->gauge('ISOUSC', intval($TRAME_ISOUSC));
+
     if (DEBUGAUTOPILOT) echo "TRAME_PAPP: $TRAME_PAPP".PHP_EOL;
     if (DEBUGAUTOPILOT) echo "TRAME_ISOUSC: $TRAME_ISOUSC".PHP_EOL;
     if (DEBUGAUTOPILOT) echo "TRAME_IINST: $TRAME_IINST".PHP_EOL;
