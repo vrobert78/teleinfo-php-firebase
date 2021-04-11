@@ -14,4 +14,4 @@ function checkSum($message) {
     echo chr($sum);
 }
 
-checkSum("PTEC HC..");
+checkSum("ISOUSC 10");
