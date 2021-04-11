@@ -14,4 +14,4 @@ function checkSum($message) {
     echo chr($sum);
 }
 
-checkSum("ISOUSC 10");
+checkSum("ADPS 000");

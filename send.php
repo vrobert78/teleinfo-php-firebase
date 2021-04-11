@@ -13,7 +13,7 @@ function message($fd, $label, $value) {
 }
 
 
-function sendFrame($papp, $ptec, $iinst, $isousc) {
+function sendFrame($papp, $ptec, $iinst, $isousc, $adps) {
     $fd = dio_open(DEVICE_ARDUINO, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
     dio_fcntl($fd, F_SETFL, O_SYNC);
@@ -23,6 +23,7 @@ function sendFrame($papp, $ptec, $iinst, $isousc) {
     message($fd, "PTEC ",$ptec);
     message($fd, "IINST ",$iinst);
     message($fd, "ISOUSC ",$isousc);
+    message($fd, "ADPS ",$adps);
 
     dio_close ($fd);
 
@@ -43,6 +44,6 @@ function checkSum($message) {
 }
 
 while (true) {
-    sendFrame("08000", "HP..", "040", "45");
-    //sendFrame("08000", "HP..", "005", "10");
+    sendFrame("08000", "HP..", "005", "15", "000");
+    //sendFrame("08000", "HP..", "005", "10", "000");
 }
