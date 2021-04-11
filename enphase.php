@@ -29,12 +29,17 @@ $database = (new Factory)
    )
    ->createDatabase();
 
+$memcacheD = new Memcached;
+$memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
+
 while (true) {
     try {
         $arrayValues = getProduction();
         if (DEBUG) var_dump($arrayValues);
         $return = insertIntoFirebase($arrayValues,$database);
         if (DEBUG) echo 'Insert:'.$return.PHP_EOL;
+
+        $memcacheD->set('ENPHASE', $arrayValues);
         sleep(ENPHASEPAUSE);
     }
     catch (Exception $e) {
