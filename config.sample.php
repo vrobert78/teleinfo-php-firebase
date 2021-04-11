@@ -19,3 +19,6 @@ const DATETIMEFORMAT = 'Y-m-d H:i:s';
 const FIREBASETIMEOUT = 5.0;
 
 const DEBUG = true;
+
+const MEMCACHED_SERVER = "localhost";
+const MEMCACHED_PORT = 11211;

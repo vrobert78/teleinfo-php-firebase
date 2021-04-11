@@ -101,12 +101,18 @@ $database = (new Factory)
    )
    ->createDatabase();
 
+$memcacheD = new Memcached;
+$memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
+
 while (true) {
     try {
         $arrayValues = getTeleinfo();
         if (DEBUG) var_dump($arrayValues);
         $return = insertIntoFirebase($arrayValues,$database);
         if (DEBUG) echo 'Insert:'.$return.PHP_EOL;
+
+        $memcacheD->set('HOMETIC', $arrayValues);
+
     }
     catch (Exception $e) {
         echo($e->getMessage());
