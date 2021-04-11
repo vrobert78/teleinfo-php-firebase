@@ -1,4 +1,5 @@
 <?php
+require __DIR__.'/vendor/autoload.php';
 require __DIR__.'/config.php';
 
 date_default_timezone_set(TIMEZONE);
@@ -46,6 +47,10 @@ function checkSum($message) {
 $memcacheD = new Memcached;
 $memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
 
+$connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
+$statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
+
+
 while (true) {
     if (DEBUGAUTOPILOT) echo "----------".PHP_EOL;
 
@@ -56,10 +61,16 @@ while (true) {
     $IINST = intval($teleinfoArray['IINST']);
     $PTEC = $teleinfoArray['PTEC'];
 
+    $statsd->gauge('PAPP', $PAPP);
+    $statsd->gauge('IINST', $IINST);
+
     $enphaseArray = $memcacheD->get('ENPHASE');
 
     $PRODUCTION = intval($enphaseArray['production'][0]['wNow']);
     $PRODUCTIONA = intval($PRODUCTION/230);
+
+    $statsd->gauge('PRODUCTION', $PRODUCTION);
+    $statsd->gauge('PRODUCTIONA', $PRODUCTIONA);
 
     if (DEBUGAUTOPILOT) echo "Production: $PRODUCTIONA A".PHP_EOL;
 
