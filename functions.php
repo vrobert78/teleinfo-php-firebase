@@ -31,8 +31,6 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
     $frames = explode(chr(10), $rawdataframe); // Convert the rawdata frame into array
 
     foreach ($frames as $id => $rawframe) {
-        var_dump($rawframe);
-
         $frame = explode ($separator, $rawframe, 3);
 
         $tag = $frame[0];
@@ -71,19 +69,12 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
 }
 
 function checkSum($message, $checksum) {
-var_dump($message);
-var_dump($checksum);
-
-
     $sum=0;
     foreach (str_split($message) as $char) {
         $sum += ord($char);
     }
 
     $sum = ($sum & hexdec('3F')) + hexdec('20');
-
-    var_dump(chr($sum));
-    //die();
 
     if (chr($sum)===$checksum) {
         return true;

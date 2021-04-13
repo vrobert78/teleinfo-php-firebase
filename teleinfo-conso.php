@@ -34,10 +34,17 @@ $database = (new Factory)
 $memcacheD = new Memcached;
 $memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
 
+$connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
+$statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
+
 while (true) {
     try {
         $arrayValues = getTeleinfo();
         if (DEBUG) var_dump($arrayValues);
+
+        $statsd->gauge('PAPP', $arrayValues['PAPP']);
+        $statsd->gauge('IINST', $arrayValues['IINST']);
+
         $return = insertIntoFirebase($arrayValues,$database);
         if (DEBUG) echo 'Insert:'.$return.PHP_EOL;
 
