@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=teleinfo
-ExecStart=/usr/bin/php /home/teleinfo/teleinfo.php
+ExecStart=/usr/bin/php /home/pi/Code/teleinfo-php-firebase/teleinfo.php
 
 [Install]
 WantedBy=multi-user.target
