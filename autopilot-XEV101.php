@@ -67,7 +67,7 @@ while (true) {
     $enphaseArray = $memcacheD->get('ENPHASE');
 
     $PRODUCTION = intval($enphaseArray['production'][0]['wNow']);
-    $PRODUCTIONA = intval($PRODUCTION/230);
+    $PRODUCTIONA = intval($PRODUCTION / VOLTAGE);
 
     $statsd->gauge('PRODUCTION', $PRODUCTION);
     $statsd->gauge('PRODUCTIONA', $PRODUCTIONA);
@@ -76,9 +76,19 @@ while (true) {
 
     if ($PAPP===0) {
         if (DEBUGAUTOPILOT) echo "Injection: $IINST A".PHP_EOL;
+        $statsd->gauge('EXPORTA', $IINST);
+        $statsd->gauge('EXPORT', $IINST*VOLTAGE);
+        $statsd->gauge('IMPORTA', 0);
+        $statsd->gauge('CONSOMMATION', $PRODUCTION-($IINST*VOLTAGE));
+        $statsd->gauge('CONSOMMATIONA', $PRODUCTIONA-$IINST);
     }
     else {
         if (DEBUGAUTOPILOT) echo "Import: $IINST A - $PAPP VA".PHP_EOL;
+        $statsd->gauge('EXPORTA', 0);
+        $statsd->gauge('EXPORT', 0);
+        $statsd->gauge('IMPORTA', $IINST);
+        $statsd->gauge('CONSOMMATION', $PAPP+$PRODUCTION);
+        $statsd->gauge('CONSOMMATIONA', $PRODUCTIONA+$IINST);
     }
 
     $TRAME_PAPP = "00000$PAPP";
@@ -86,16 +96,12 @@ while (true) {
 
     $STOP = false;
 
-    if ($PRODUCTIONA>=8) {
+    if ($PRODUCTIONA>=14) {
 
         if ($PAPP===0) {
             if (DEBUGAUTOPILOT) echo "Production avec Injection".PHP_EOL;
 
-            if ($IINST>=6) {
-                $ISOUSC = $PRODUCTIONA;
-            } else {
-                $ISOUSC = $PRODUCTIONA - MARGE;
-            }
+            $ISOUSC = $PRODUCTIONA - MARGE;
         } else {
             if (DEBUGAUTOPILOT) echo "Production + Import".PHP_EOL;
             $ISOUSC = $PRODUCTIONA - MARGE - $IINST;
@@ -121,9 +127,9 @@ while (true) {
     }
 
     if ($STOP) {
-        $TRAME_ISOUSC = "45";
-        $TRAME_IINST = "047";
-        $TRAME_ADPS = "047";
+        $TRAME_ISOUSC = "01";
+        $TRAME_IINST = "003";
+        $TRAME_ADPS = "003";
         $TRAME_PTEC = "HP..";
     }
 
