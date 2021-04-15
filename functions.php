@@ -31,11 +31,24 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
     $frames = explode(chr(10), $rawdataframe); // Convert the rawdata frame into array
 
     foreach ($frames as $id => $rawframe) {
-        $frame = explode ($separator, $rawframe, 3);
+        $frame = explode ($separator, $rawframe);
 
-        $tag = $frame[0];
-        $value = $frame[1];
-        $checksum = $frame[2][0];
+        if (count($frame)==3) {
+            //trame sans horodatage
+            $tag = $frame[0];
+            $value = $frame[1];
+            $checksum = $frame[2][0];
+
+            $trame_horodatee = false;
+        }
+        else {
+            $tag = $frame[0];
+            $horodatage = $frame[1];
+            $value = $frame[2];
+            $checksum = $frame[3][0];
+
+            $trame_horodatee = true;
+        }
 
         switch ($separator) {
             case ' ':
@@ -44,20 +57,34 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
                 break;
             case "\t":
                 //Mode Standard
-                $checksumOK = checkSum($tag.$separator.$value.$separator, $checksum);
+                if ($trame_horodatee)
+                    $checksumOK = checkSum($tag.$separator.$horodatage.$separator.$value.$separator, $checksum);
+                else
+                    $checksumOK = checkSum($tag.$separator.$value.$separator, $checksum);
                 break;
             default:
                 $checksumOK = false;
         }
 
         if ($checksumOK) {
-            if(!empty($tag) && !empty($value)) {
 
-                if (in_array($tag, $arrayLabels)) {
-                    $value = intval($value);
+            if ($trame_horodatee) {
+                if(!empty($tag)) {
+                    $data[$tag] = array($horodatage, $value);
                 }
 
-                $data[$tag] = $value;
+            }
+            else {
+
+                if(!empty($tag) && !empty($value)) {
+
+                    if (in_array($tag, $arrayLabels)) {
+                        $value = intval($value);
+                    }
+
+                    $data[$tag] = $value;
+                }
+
             }
         }
         else {
