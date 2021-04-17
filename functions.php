@@ -31,7 +31,10 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
     $frames = explode(chr(10), $rawdataframe); // Convert the rawdata frame into array
 
     foreach ($frames as $id => $rawframe) {
-        $frame = explode ($separator, $rawframe);
+        if ($separator===' ')
+            $frame = explode ($separator, $rawframe, 3);
+        else
+            $frame = explode ($separator, $rawframe);
 
         if (count($frame)==3) {
             //trame sans horodatage
