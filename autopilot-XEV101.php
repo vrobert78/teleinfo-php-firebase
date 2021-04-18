@@ -50,9 +50,17 @@ $memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
 $connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
 $statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
 
+$count=0;
+$ISOUSC=MIN_POWER_XEV;
+$oldState='UNKNOWN';
+$newState='UNKNOWN';
 
 while (true) {
     if (DEBUGAUTOPILOT) echo "----------".PHP_EOL;
+    $oldState = $newState;
+
+    $count++;
+    if (DEBUGAUTOPILOT) echo "Count: $count".PHP_EOL;
 
     $teleinfoArray = $memcacheD->get('HOMETIC');
 //    var_dump($teleinfoArray);
@@ -96,41 +104,69 @@ while (true) {
 
     $STOP = false;
 
-    if ($PRODUCTIONA>=14) {
+    if ($PRODUCTIONA>=MIN_POWER_XEV || ($PAPP===0 && $IINST>=MIN_POWER_XEV)) {
 
         if ($PAPP===0) {
             if (DEBUGAUTOPILOT) echo "Production avec Injection".PHP_EOL;
+            $newState = 'INJECTION';
+            if ($oldState!=$newState) $count = 0;
 
-            $ISOUSC = $PRODUCTIONA - MARGE;
-        } else {
-            if (DEBUGAUTOPILOT) echo "Production + Import".PHP_EOL;
-            $ISOUSC = $PRODUCTIONA - MARGE - $IINST;
-        }
 
-        if ($ISOUSC<=0) {
-            if (DEBUGAUTOPILOT) echo "Trop d'import > STOP".PHP_EOL;
-            $STOP=true;
+            if ($count>=MAX_LOOPS_BEFORE_DECISION) {
+                $count = 0;
+
+                if ($ISOUSC<min(MAX_ISOUSC,$PRODUCTIONA*2) && $IINST>MIN_INJECTION) {
+                    $ISOUSC++;
+                }
+                elseif ($IINST<MIN_INJECTION && $ISOUSC>1) {
+                    $ISOUSC--;
+                }
+                elseif ($ISOUSC>min(MAX_ISOUSC,$PRODUCTIONA*2)) {
+                    $ISOUSC--;
+                }
+            }
         }
         else {
-            $TRAME_ISOUSC = "00$ISOUSC";
-            $TRAME_ISOUSC = substr($TRAME_ISOUSC, strlen($TRAME_ISOUSC)-2);
+            if (DEBUGAUTOPILOT) echo "Production + Import".PHP_EOL;
+            $newState = 'IMPORT';
+            if ($oldState!=$newState) $count = 0;
 
-            $TRAME_IINST = "000";
-            $TRAME_ADPS = "000";
-            $TRAME_PTEC = "HC..";
+            if ($count>=MAX_LOOPS_BEFORE_DECISION) {
+                $count = 0;
+
+                if ($ISOUSC>1) {
+                    $ISOUSC--;
+                }
+            }
+
         }
-
     }
     else {
         if (DEBUGAUTOPILOT) echo "Peu ou Pas de Production > STOP".PHP_EOL;
+        $newState = 'NO-PRODUCTION';
+        $count = 0;
+
         $STOP=true;
     }
 
-    if ($STOP) {
+    if (DEBUGAUTOPILOT) echo "ISOUSC: $ISOUSC".PHP_EOL;
+    if (DEBUGAUTOPILOT) echo "STATE: $newState".PHP_EOL;
+
+    if ($STOP || $ISOUSC<=MIN_POWER_XEV) {
         $TRAME_ISOUSC = "01";
         $TRAME_IINST = "003";
         $TRAME_ADPS = "003";
         $TRAME_PTEC = "HP..";
+
+        $ISOUSC=MIN_POWER_XEV;
+    }
+    else {
+        $TRAME_ISOUSC = "00$ISOUSC";
+        $TRAME_ISOUSC = substr($TRAME_ISOUSC, strlen($TRAME_ISOUSC)-2);
+
+        $TRAME_IINST = "000";
+        $TRAME_ADPS = "000";
+        $TRAME_PTEC = "HC..";
     }
 
     $statsd->gauge('ISOUSC', intval($TRAME_ISOUSC));
