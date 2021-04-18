@@ -16,9 +16,25 @@ const ENPHASE_URI = 'http://xxx.xxx.xxx.xxx/production.json';
 
 const ENPHASEPAUSE = 5;
 const DATETIMEFORMAT = 'Y-m-d H:i:s';
-const FIREBASETIMEOUT = 5.0;
 
-const DEBUG = true;
+const FIREBASETIMEOUT = 5.0;
+const FIREBASEJSON = __DIR__ . '/firebase-service-account.json';
+
+const DEBUG = false;
+const DEBUGAUTOPILOT = true;
 
 const MEMCACHED_SERVER = "localhost";
 const MEMCACHED_PORT = 11211;
+
+const STATSD_SERVER = '192.168.0.4';
+const STATSD_PORT = 8125;
+
+const VOLTAGE = 240;
+
+const MIN_POWER_XEV = 8;
+
+const MAX_LOOPS_BEFORE_DECISION = 10;
+
+const MAX_ISOUSC = 45;
+
+const MIN_INJECTION = 4;
