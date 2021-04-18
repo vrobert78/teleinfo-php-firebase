@@ -16,6 +16,8 @@ function getTeleinfo () {
     'EASF05', 'EASF06', 'EASF07', 'EASF08', 'EASF09', 'EASF10', 'EASD01', 'EASD02', 'EASD03', 'EASD04',
     'EAIT', 'ERQ1', 'ERQ2', 'ERQ3', 'ERQ4', 'IRMS1', 'URMS1', 'PREF', 'PCOUP', 'SINSTS', 'SINSTI', 'PRM'), "\t");
 
+    unset($frame);
+
     return $data;
 }
 
@@ -51,6 +53,7 @@ while (true) {
 
         $memcacheD->set('HOMETIC-PRODUCTION', $arrayValues);
 
+        unset($arrayValues);
     }
     catch (Exception $e) {
         echo($e->getMessage());

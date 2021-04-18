@@ -18,6 +18,8 @@ function getFrame($portcom, $portcom_config) {
         }
     }
     dio_close ($fd);
+    unset($fd);
+    unset($char);
 
     $frame = chop(substr($frame,1,-1)); //Removing starting & ending characters
 
@@ -93,7 +95,17 @@ function decodeFrame($rawdataframe, $arrayLabels, $separator) {
         else {
             echo 'Error with checksum on:'.$tag.PHP_EOL;
         }
+
+        unset ($frame);
+        unset ($rawframe);
+        unset ($checksumOK);
+        unset ($tag);
+        unset ($horodatage);
+        unset ($value);
+        unset ($checksum);
     }
+
+    unset($frames);
 
     return $data;
 }
@@ -106,10 +118,11 @@ function checkSum($message, $checksum) {
 
     $sum = ($sum & hexdec('3F')) + hexdec('20');
 
-    if (chr($sum)===$checksum) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    if (chr($sum)===$checksum)
+        $return=true;
+    else
+        $return=false;
+
+    unset($sum);
+    return $return;
 }
