@@ -18,7 +18,7 @@ function sendFrame($papp, $ptec, $iinst, $isousc, $adps) {
     $fd = dio_open(DEVICE_ARDUINO, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
     dio_fcntl($fd, F_SETFL, O_SYNC);
-    dio_tcsetattr($fd, DEVICE_CONFIG);
+    dio_tcsetattr($fd, DEVICE_CONFIG_ARDUINO);
 
     message($fd, "PAPP ",$papp);
     message($fd, "PTEC ",$ptec);
