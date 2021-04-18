@@ -69,9 +69,6 @@ while (true) {
     $IINST = intval($teleinfoArray['IINST']);
     $PTEC = $teleinfoArray['PTEC'];
 
-    $statsd->gauge('PAPP', $PAPP);
-    $statsd->gauge('IINST', $IINST);
-
     $enphaseArray = $memcacheD->get('ENPHASE');
 
     $PRODUCTION = intval($enphaseArray['production'][0]['wNow']);
