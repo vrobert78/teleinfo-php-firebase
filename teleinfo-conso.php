@@ -23,21 +23,7 @@ function insertIntoFirebase(array $data, $database) {
     return TRUE;
 }
 
-$database = (new Factory)
-   ->withServiceAccount(FIREBASEJSON)
-   ->withDatabaseUri(FIREBASE_URI)
-   ->withHttpClientOptions(
-    HttpClientOptions::default()->withTimeout(FIREBASETIMEOUT)
-   )
-   ->createDatabase();
-
-$memcacheD = new Memcached;
-$memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
-
-$connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
-$statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
-
-while (true) {
+function measure(&$database, &$memcacheD, &$statsd) {
     try {
         $arrayValues = getTeleinfo();
         if (DEBUG) var_dump($arrayValues);
@@ -54,4 +40,22 @@ while (true) {
     catch (Exception $e) {
         echo($e->getMessage());
     }
+}
+
+$database = (new Factory)
+   ->withServiceAccount(FIREBASEJSON)
+   ->withDatabaseUri(FIREBASE_URI)
+   ->withHttpClientOptions(
+    HttpClientOptions::default()->withTimeout(FIREBASETIMEOUT)
+   )
+   ->createDatabase();
+
+$memcacheD = new Memcached;
+$memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
+
+$connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
+$statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
+
+while (true) {
+    measure($database, $memcacheD, $statsd);
 }
