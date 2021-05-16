@@ -53,3 +53,5 @@ const MAX_LOOPS_BEFORE_DECISION = 10;
 const MAX_ISOUSC = 45;
 
 const MIN_INJECTION = 4;
+
+const MAX_MAIN_LOOP = 3600;

@@ -56,6 +56,7 @@ $memcacheD->addServer(MEMCACHED_SERVER, MEMCACHED_PORT);
 $connection = new \Domnikl\Statsd\Connection\UdpSocket(STATSD_SERVER, STATSD_PORT);
 $statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
 
-while (true) {
+$loopCount=0;
+while ($loopCount++<MAX_MAIN_LOOP) {
     measure($database, $memcacheD, $statsd);
 }
