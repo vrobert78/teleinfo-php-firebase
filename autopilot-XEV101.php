@@ -217,11 +217,22 @@ $oldState='UNKNOWN';
 $newState='UNKNOWN';
 $XEVmode='AUTO';
 $max_loop_before_decrease=MAX_LOOPS_BEFORE_DECISION_DECREASE;
+$i=0;
 
 while (true) {
-    $XEVmode = $database->getReference('XEV101')->getChild('STATUS')->getValue() ?? 'AUTO';
-
     if (DEBUGAUTOPILOT) echo "----------".PHP_EOL;
+
+    if (($i++ % 30) == 0) {
+        try {
+            if (DEBUGAUTOPILOT) echo "Check XEV Mode ($i)".PHP_EOL;
+            $XEVmode = $database->getReference('XEV101')->getChild('STATUS')->getValue() ?? 'AUTO';
+        }
+        catch (Exception $e) {
+            echo($e->getMessage());
+        }
+    }
+
+
     if (DEBUGAUTOPILOT) echo "XEV Mode: $XEVmode".PHP_EOL;
 
 
