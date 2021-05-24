@@ -124,8 +124,8 @@ function maxcharge($memcacheD, $statsd, $PAPP, $ISOUSC, $IINST, $ADPS) {
 
 }
 
-function autopilot($memcacheD, $statsd, &$count, &$ORDER, &$oldState, &$newState, &$max_loop_before_decrease, $PAPP, $IINST, $PRODUCTIONA) {
-    $oldState = $newState;
+function autopilot($memcacheD, $statsd, &$count, &$ORDER, &$State, &$max_loop_before_decrease, $PAPP, $IINST, $PRODUCTIONA) {
+    $newState='UNKNOWN';
 
     $count++;
     if (DEBUGAUTOPILOT) echo "Count: $count".PHP_EOL;
@@ -137,7 +137,7 @@ function autopilot($memcacheD, $statsd, &$count, &$ORDER, &$oldState, &$newState
         if ($PAPP===0) {
             if (DEBUGAUTOPILOT) echo "Production avec Injection".PHP_EOL;
             $newState = 'INJECTION';
-            if ($oldState!=$newState) $count = 0;
+            if ($State!=$newState) $count = 0;
 
 
             if ($count>=MAX_LOOPS_BEFORE_DECISION) {
@@ -154,7 +154,7 @@ function autopilot($memcacheD, $statsd, &$count, &$ORDER, &$oldState, &$newState
         else {
             if (DEBUGAUTOPILOT) echo "Production + Import".PHP_EOL;
             $newState = 'IMPORT';
-            if ($oldState!=$newState) {
+            if ($State!=$newState) {
                 $count = 0;
                 $max_loop_before_decrease = MAX_LOOPS_BEFORE_DECISION_DECREASE;
             }
@@ -195,6 +195,8 @@ function autopilot($memcacheD, $statsd, &$count, &$ORDER, &$oldState, &$newState
     $TICFrame->sendFrame();
     unset($TICFrame);
 
+    $State = $newState;
+
 }
 
 $database = (new Factory)
@@ -213,8 +215,7 @@ $statsd = new \Domnikl\Statsd\Client($connection, 'HOMETIC');
 
 $count=0;
 $ORDER=MIN_POWER_XEV;
-$oldState='UNKNOWN';
-$newState='UNKNOWN';
+$State='UNKNOWN';
 $XEVmode='AUTO';
 $max_loop_before_decrease=MAX_LOOPS_BEFORE_DECISION_DECREASE;
 $i=0;
@@ -293,7 +294,7 @@ while (true) {
 
             case 'AUTO':
             default:
-                autopilot($memcacheD, $statsd, $count, $ORDER, $oldState, $newState, $max_loop_before_decrease, $PAPP, $IINST, $PRODUCTIONA);
+                autopilot($memcacheD, $statsd, $count, $ORDER, $State, $max_loop_before_decrease, $PAPP, $IINST, $PRODUCTIONA);
                 break;
         }
     }
